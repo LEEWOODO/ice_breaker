@@ -1,11 +1,7 @@
-from dotenv import load_dotenv
 import os
+
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
-
-# .env에서 환경변수 로드
-load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
 
 information = """
 ron Man is a superhero appearing in American comic books published by Marvel Comics. Co-created by writer and editor Stan Lee, developed by scripter Larry Lieber, and designed by artists Don Heck and Jack Kirby, the character first appeared in Tales of Suspense #39 in 1962 (cover dated March 1963) and received his own title with Iron Man #1 in 1968. Shortly after his creation, Iron Man became a founding member of the superhero team, the Avengers, alongside Thor, Ant-Man, the Wasp, and the Hulk. Iron Man stories, individually and with the Avengers, have been published consistently since the character's creation.
@@ -21,22 +17,16 @@ if __name__ == "__main__":
     print("Ice Breaker")
 
     summary_template = """
-    Given the information "{information}" about a person, create:
-    1. A short summary
-    2. Two interesting facts about them
+        given the information {information} about a person from I want you to create:
+        1. a short summary
+        2. two interesting facts about them
     """
 
     summary_prompt_template = PromptTemplate(
         input_variables=["information"], template=summary_template
     )
-
-    # API 키를 직접 전달 (환경변수에서 가져온 값)
-    llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo", api_key=api_key)
-
-    # 체인 연결
+    llm = ChatOpenAI(temperature=0)
     chain = summary_prompt_template | llm
+    res = chain.invoke(input={"information": information})
 
-    # 체인 실행
-    res = chain.invoke({"information": information})
-
-    print(res.content)
+    print(res)
